@@ -4,7 +4,7 @@ provider "aws" {
 
 data "aws_ami" "cis_rhel9" {
   most_recent = true
-  owners      = ["679593333241"] # Official Center for Internet Security AMIs
+  owners      = ["679593333241"] # Center for Internet Security AMIs
 
   filter {
     name   = "name"
@@ -32,5 +32,11 @@ module "ec2" {
   associate_public_ip = var.associate_public_ip
   instance_name       = var.instance_name
   tags                = var.tags
-}
 
+  user_data = <<-EOF
+    #!/bin/bash
+    hostnamectl set-hostname ${var.instance_name}
+    echo "127.0.0.1 ${var.instance_name}" >> /etc/hosts
+    echo "preserve_hostname: true" >> /etc/cloud/cloud.cfg
+  EOF
+}
