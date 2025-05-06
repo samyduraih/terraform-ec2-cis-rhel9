@@ -4,7 +4,7 @@ provider "aws" {
 
 data "aws_ami" "cis_rhel9" {
   most_recent = true
-  owners      = ["679593333241"] # Center for Internet Security AMIs
+  owners      = ["679593333241"]
 
   filter {
     name   = "name"
@@ -21,6 +21,7 @@ data "aws_ami" "cis_rhel9" {
     values = ["hvm"]
   }
 }
+
 
 module "ec2" {
   source              = "./modules/ec2-instance"
