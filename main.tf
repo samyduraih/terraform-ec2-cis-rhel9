@@ -34,9 +34,26 @@ module "ec2" {
   instance_name       = var.instance_name
   tags                = var.tags
 
-  user_data = <<-EOF
-    #!/bin/bash
-    hostnamectl set-hostname ${var.instance_name}
-    echo "preserve_hostname: true" >> /etc/cloud/cloud.cfg
+ user_data = <<-EOF
+    #cloud-config
+    preserve_hostname: true
+
+    hostname: ${var.instance_name}
+
+    write_files:
+      - path: /etc/hosts
+        content: |
+          127.0.0.1 localhost
+          127.0.1.1 ${var.instance_name}
+
+    packages:
+      - python3          # cloud-init may need python for modules
+      - jq               # handy for JSON parsing in scripts
+    runcmd:
+      - hostnamectl set-hostname ${var.instance_name}
+      - echo "Installing Amazon SSM Agent…" 
+      - sudo dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+      - systemctl enable amazon-ssm-agent
+      - systemctl start amazon-ssm-agent
   EOF
 }
