@@ -2,13 +2,13 @@ provider "aws" {
   region = var.aws_region
 }
 
-data "aws_ami" "cis_rhel9" {
+data "aws_ami" "rhel9_quickstart" {
   most_recent = true
-  owners      = ["679593333241"]
+  owners      = ["309956199498"]  # Red Hat Quick Start AMIs
 
   filter {
     name   = "name"
-    values = ["CIS Red Hat Enterprise Linux 9 Benchmark Level 1*"]
+    values = ["RHEL-9?_HVM-*-GA-M?"]  # matches RHEL‑9.x HVM General‑Availability images
   }
 
   filter {
@@ -22,10 +22,10 @@ data "aws_ami" "cis_rhel9" {
   }
 }
 
-
 module "ec2" {
-  source              = "./modules/ec2-instance"
-  ami_id              = data.aws_ami.cis_rhel9.id
+  source = "./modules/ec2-instance"
+
+  ami_id              = data.aws_ami.rhel9_quickstart.id
   instance_type       = var.instance_type
   subnet_id           = var.subnet_id
   security_group_ids  = var.security_group_ids
