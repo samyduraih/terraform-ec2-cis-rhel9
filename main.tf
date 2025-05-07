@@ -37,7 +37,6 @@ module "ec2" {
   user_data = <<-EOF
     #!/bin/bash
     hostnamectl set-hostname ${var.instance_name}
-    echo "127.0.0.1 ${var.instance_name}" >> /etc/hosts
     echo "preserve_hostname: true" >> /etc/cloud/cloud.cfg
   EOF
 }
